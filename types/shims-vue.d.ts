@@ -5,7 +5,7 @@ declare module "@agilebpm/build/ab-core/ab-core.umd.min.js" {
   export const svgIcon: any;
   export const abDictTree: any;
   export const abAuthorization: any;
-}
+} 
 
 declare module "@agilebpm/build/avue-form-design/avue-form-design.umd.min.js" {
   export function setupFormDesign(app: vue<Element>);

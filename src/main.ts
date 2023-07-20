@@ -7,7 +7,7 @@ import router from '@/router/index'
 import { setupAbCore } from 'agilebpm'
 import { setupFormDesign } from 'abFormDesigner'
 import 'virtual:svg-icons-register'; 
-
+ 
 import ElementPlus from 'element-plus'
 import pinia from './store'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
