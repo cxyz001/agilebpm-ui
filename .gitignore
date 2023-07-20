@@ -26,3 +26,4 @@ package-lock.json
 .project
 /yarn.lock
 .history/*
+auto-imports.d.ts
