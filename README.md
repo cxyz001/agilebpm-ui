@@ -1,8 +1,8 @@
  
 # agile-bpm-basic  前端工程介绍
 
-前端是基于 ElementPlugs 开发，支持 Chrome、Edge、Firefox、Safari 等现代主流浏览器。
-您可以访问 ElementPlugs 官网文档去查阅基础组件 API，您还可以查阅 AgileBPM 基础组件 API
+前端是基于 ElementPlus 开发，支持 Chrome、Edge、Firefox、Safari 等现代主流浏览器。
+您可以访问 ElementPlus 官网文档去查阅基础组件 API，您还可以查阅 AgileBPM 基础组件 API
 
 ## 快速开始
 
