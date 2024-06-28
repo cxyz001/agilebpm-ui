@@ -1,8 +1,11 @@
 
 import { useDefaultConfig } from "@/config/defaultConfig"
 import { createI18n } from 'vue-i18n'
-import el_zh_cn from 'element-plus/lib/locale/lang/zh-cn'
-import el_en from 'element-plus/lib/locale/lang/en'
+// @ts-ignore
+import el_zh_cn from 'element-plus/dist/locale/zh-cn'
+// @ts-ignore
+import el_en from 'element-plus/dist/locale/en'
+
 import zh_cn from './lang/zh-cn'
 import en from './lang/en'
 const config  =useDefaultConfig()

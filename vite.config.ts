@@ -6,7 +6,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import AutoImport from 'unplugin-auto-import/vite'
 export default defineConfig({
   plugins: [
-    vue(), 
+    vue(),
     createSvgIconsPlugin({
       // 指定需要缓存的图标文件夹，地址可改
       iconDirs: [resolve(process.cwd(), 'src/icon/svg')],
@@ -19,7 +19,7 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    include: ['agilebpm', 'abDesigner', 'abFormDesigner', 'abViewComponents'],
+    include: ['agilebpm', 'abDesigner', 'abFormDesigner'],
   },
 
   resolve: {

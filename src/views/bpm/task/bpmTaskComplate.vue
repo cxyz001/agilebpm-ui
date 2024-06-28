@@ -1,11 +1,16 @@
 <template>
-  <div v-loading="!info.bpmData.defName" style="overflow: auto;background: #fff;">
-    <div
-      class="leftBox"
-      :style="{
-        width:'100%',
-      }"
-    >
+  <div
+    v-loading="!info.bpmData.defName"
+    style="overflow: auto"
+    :style="{
+      transformOrigin: 'top left',
+      transform:
+        proxy.$route.query.abIframeType == 'iframe'
+          ? `scale(${info.scale})`
+          : '',
+    }"
+  >
+    <div :class="showTaskDynamic(info.bpmData) ? 'leftBoxDyminc' : 'leftBox'">
       <div v-if="info.bpmData.defName" class="header-fix-top">
         <bpm-buttons
           v-if="info.bpmData.buttonList.length"
@@ -17,7 +22,10 @@
       <div
         v-if="info.bpmData.defName"
         class="leftContent"
-        :style="{ height: info.height }"
+        :style="{
+          height: info.height,
+          overflow: info.bpmData.bpmForm.type == 'url' ? '' : 'auto',
+        }"
       >
         <ab-url-form
           v-if="info.bpmData.bpmForm.type == 'url'"
@@ -27,12 +35,15 @@
         <cust-form v-else ref="inner" :form-data="info.formData" />
       </div>
     </div>
+    <div v-if="showTaskDynamic(info.bpmData)" class="rightBox">
+      <bpm-task-dynamic :instance="info.bpmData.bpmInstance" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
-  import { getCurrentInstance, onMounted, Ref,reactive } from 'vue'
+  import { useTabsStore } from '@/store/modules/tabs'
+  import { getCurrentInstance, Ref } from 'vue'
   import {
     abForm as custForm,
     bpmButtons,
@@ -41,21 +52,39 @@ import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
     bpmApi,
     abTools,
   } from 'agilebpm'
+  import bpmTaskDynamic from '../myTask/components/task-dynamic.vue'
+  import { showTaskDynamic } from '../myTask/components/myTaskConfig'
+  import { ElMessageBox } from 'element-plus'
 
   const { proxy } = abTools.useCurrentInstance()
   const vueContext = getCurrentInstance()
-  const { changeTabsMeta } = useAbStoreAdapter()
+  const { changeTabsMeta } = useTabsStore()
+
   const taskId = vueContext?.proxy?.$route.query.id
+  vueContext.proxy.$route.query.type = 'taskId'
   const info: any = reactive({
-    bpmData: {} as any, // Ref<BpmData>,
+    bpmData: {} as Ref<BpmData>,
     formData: {},
     height: `${window.innerHeight - 279}px`,
+    scale: 1,
   })
 
-  onMounted(() => {
-    bpmApi.bpmData.getTaskData(taskId).then(({ data }) => {
+  bpmApi.bpmData.getTaskData(taskId).then((res: any) => {
+    if (!res.isOk && res.code === 'bpmConfirm') {
+      ElMessageBox.confirm(res.msg, '提示', {
+        confirmButtonText: '确定',
+        showCancelButton: false,
+        type: 'warning',
+      }).then(() => {
+        //跳转到任务待办页
+        proxy.$router.push({
+          name: 'BpmMyTaskTodoList',
+        })
+      })
+    }
+    if (res.isOk) {
       bpmTools.initBpmDataAndFormData(
-        data,
+        res.data,
         vueContext,
         info.bpmData,
         info.formData
@@ -64,28 +93,28 @@ import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
 
       changeTabsMeta({
         fullPath: proxy.$route.fullPath,
-        meta: { title: `处理任务-${data.bpmInstance.title}` },
+        meta: { title: `处理任务-${res.data.bpmInstance.title}` },
       })
-    })
+    }
+  })
+
+  const changeScale = (scale: any) => {
+    info.scale = scale
+  }
+
+  onMounted(() => {
+    if (proxy.$route.query.abIframeType == 'iframe') {
+      window.parent.postMessage({ type: 'bpmComplateOrInstanceDetailsFn' }, '*')
+      window.onmessage = (e) => {
+        if (e.data.type == 'changeScale') {
+          if (e.data.scale) {
+            changeScale(e.data.scale)
+          }
+        }
+      }
+    }
   })
 </script>
 <style lang="scss" scoped>
-  .leftBox {
-    float: left;
-    width: calc(100% - 400px);
-    padding: 20px;
-    .leftContent {
-      padding: 12px;
-      overflow: auto;
-      border-top: 1px dashed #ccc;
-    }
-  }
-  .rightBox {
-    float: left;
-    width: 400px;
-    height: 100%;
-    padding: 20px;
-    overflow: hidden;
-    border-left: 10px solid #f5f7f9;
-  }
+  @import '../myTask/components/taskDynamic.scss';
 </style>

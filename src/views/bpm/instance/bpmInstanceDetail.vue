@@ -1,82 +1,120 @@
 <template>
-  <div v-loading="!info.bpmData.defName" style="overflow: auto;background:#fff;">
-    <div class="leftBox">
+  <div v-loading="!info.bpmData" style="overflow: auto">
+    <div :class="showTaskDynamic(info.bpmData) ? 'leftBoxDyminc' : 'leftBox'">
       <div v-if="info.bpmData.defName">
-        <bpm-buttons v-if="info.bpmData.buttonList.length" :bpm-data="info.bpmData" class="print-hidden" />
+        <bpm-buttons
+          v-if="info.bpmData.buttonList.length"
+          :bpm-data="info.bpmData"
+          class="print-hidden"
+        />
       </div>
-      <div v-if="info.bpmData.defName" class="leftContent" :style="{ height: info.height }">
-        <ab-url-form v-if="info.bpmData.bpmForm.type == 'url'" ref="url" :bpm-form="info.bpmData.bpmForm" />
+      <div
+        v-if="info.bpmData.defName"
+        class="leftContent"
+        :style="{ height: info.height }"
+      >
+        <ab-url-form
+          v-if="info.bpmData.bpmForm.type == 'url'"
+          ref="url"
+          :bpm-form="info.bpmData.bpmForm"
+        />
         <cust-form v-else ref="inner" :form-data="info.formData" />
       </div>
+    </div>
+    <div v-if="showTaskDynamic(info.bpmData)" class="rightBox">
+      <bpm-task-dynamic :instance="info.bpmData.bpmInstance" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
-import {
-  abForm as custForm,
-  bpmButtons,
-  abUrlForm,
-  bpmTools,
-  abTools,
-  bpmApi,
-} from 'agilebpm'
-import { getCurrentInstance, reactive, onMounted } from 'vue'
+  import { useTabsStore } from '@/store/modules/tabs'
+  import { bpmTools, abTools, bpmApi } from 'agilebpm'
+  import { getCurrentInstance } from 'vue'
+  import instanceDetail from './instanceDetail.vue'
+  import { abForm as custForm, bpmButtons, abUrlForm } from 'agilebpm'
+  import bpmTaskDynamic from '../myTask/components/task-dynamic.vue'
+  import { showTaskDynamic } from '../myTask/components/myTaskConfig'
 
-const { proxy } = abTools.useCurrentInstance()
-const vueContext = getCurrentInstance()
-const { changeTabsMeta } = useAbStoreAdapter()
-const instId = vueContext?.proxy?.$route.query.instId
-const opId = vueContext?.proxy?.$route.query.opId
-const bizId = vueContext?.proxy?.$route.query.bizId
-const nodeKey = vueContext?.proxy?.$route.query.nodeKey
-const carbonId = vueContext?.proxy?.$route.query.carbonId
-const info: any = reactive({
-  bpmData: {},
-  formData: {},
-  height: `${window.innerHeight - 279}px`,
-})
+  const { proxy } = abTools.useCurrentInstance()
+  const vueContext = getCurrentInstance()
+  const { changeTabsMeta } = useTabsStore()
 
-onMounted(() => {
-  bpmApi.bpmData
-    .getInstData(instId, opId, bizId, nodeKey, carbonId)
-    .then(({ data }) => {
-      bpmTools.initBpmDataAndFormData(
-        data,
-        vueContext,
-        info.bpmData,
-        info.formData
-      )
-      info.bpmData.actionData.instanceId = data.bpmInstance.id
-      info.bpmData.actionData.extendConf.carbonId = carbonId
-      debugger 
-      changeTabsMeta({
-        fullPath: proxy.$route.fullPath,
-        meta: { title: `实例详情-${data.bpmInstance.title}` },
-      })
-    })
-})
-</script>
-<style lang="scss" scoped>
-.leftBox {
-  float: left;
-  width: 100%;
-  padding: 20px;
+  const instId = vueContext?.proxy?.$route.query.instId
+  const opId = vueContext?.proxy?.$route.query.opId
+  const bizId = vueContext?.proxy?.$route.query.bizId
+  const nodeKey = vueContext?.proxy?.$route.query.nodeKey
+  const carbonId = vueContext?.proxy?.$route.query.carbonId
+  const isStart = !(vueContext?.proxy?.$route.query.isStart == '0')
 
-  .leftContent {
-    padding: 12px;
-    overflow: auto;
-    border-top: 1px dashed #ccc;
+  //下面的参数走新的方法
+  const id = vueContext?.proxy?.$route.query.id
+  const type = vueContext?.proxy?.$route.query.type
+
+  const info: any = reactive({
+    bpmData: {},
+    formData: {},
+    height: `${window.innerHeight - 279}px`,
+  })
+
+  const getParam = () => {
+    if (id) {
+      if (!type) {
+        vueContext.proxy.$route.query.type = 'instId'
+      }
+      return { id: id, type: type }
+    }
+
+    if (carbonId) {
+      return { id: carbonId, type: 'carbonId' }
+    }
+    if (bizId) {
+      return { id: bizId, type: 'bizId' }
+    }
+    if (opId) {
+      return { id: opId, type: 'opId' }
+    }
+    if (instId) {
+      let typeTemp = 'instId'
+      if (isStart) {
+        typeTemp = 'instIdStart'
+      }
+      return { id: instId, type: typeTemp }
+    }
   }
-}
 
-.rightBox {
-  float: left;
-  width: 400px;
-  height: 100%;
-  padding: 20px;
-  overflow: hidden;
-  border-left: 10px solid #f5f7f9;
-}
+  const initData = () => {
+    const param = getParam()
+    bpmApi.bpmData
+      .getInstDataNew(param.id, param.type)
+      .then(({ data }) => {
+        bpmTools.initBpmDataAndFormData(
+          data,
+          vueContext,
+          info.bpmData,
+          info.formData
+        )
+        info.bpmData.actionData.instanceId = data.bpmInstance.id
+
+        if (type && type === 'carbonId') {
+          info.bpmData.actionData.extendConf.carbonId = id
+        }
+
+        changeTabsMeta({
+          fullPath: proxy.$route.fullPath,
+          meta: { title: `实例详情-${data.bpmInstance.title}` },
+        })
+      })
+      .catch((error) => {
+        if (error.code == 'bpm_taskIsDone') {
+          proxy.$router.push({ name: 'BpmMyApproveList' })
+        }
+      })
+  }
+
+  initData()
+</script>
+
+<style lang="scss" scoped>
+  @import '../myTask/components/taskDynamic.scss';
 </style>

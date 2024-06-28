@@ -1,3 +1,3 @@
-declare module "abDesigner" {
-    const setupZIndex: Function
+declare module 'abDesigner' {
+  const setupZIndex: Function
 }

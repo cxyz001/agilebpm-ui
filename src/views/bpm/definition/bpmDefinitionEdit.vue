@@ -49,7 +49,7 @@
             },
           ]"
         >
-          <el-input
+          <ab-code
             v-model="data.bpmDefinition.key"
             :disabled="data.bpmDefinition.id"
           />
@@ -80,6 +80,20 @@
         </el-form-item>
         <el-form-item label="ICON" prop="iconStyle">
           <ab-choose-svg v-model="data.bpmDefinition.iconStyle" />
+        </el-form-item>
+        <el-form-item label="是否隐藏" prop="hidden">
+          <el-tooltip
+            content="隐藏后将不在个人办公-发起申请页面展示，但依然可以通过其他方式发起流程"
+          >
+            <el-switch
+              v-model="data.bpmDefinition.hidden"
+              active-text="是"
+              :active-value="1"
+              inactive-text="否"
+              :inactive-value="0"
+              inline-prompt
+            />
+          </el-tooltip>
         </el-form-item>
       </el-form>
     </el-main>

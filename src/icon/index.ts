@@ -1,4 +1,4 @@
-import { svgIcon } from '~/agilebpm'
+import { svgIcon } from 'agilebpm'
 import { App } from 'vue'
 // const icons = require.context('.', true, /\.svg$/)
 // icons.keys().map(icons)

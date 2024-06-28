@@ -10,14 +10,14 @@
             :model="query"
             @submit.prevent
           >
-            <el-form-item label="流程标题"  prop="title$VLK">
+            <el-form-item label="流程标题" prop="title$VLK">
               <el-input
                 v-model="query.title$VLK"
                 placeholder="请输入流程标题"
               />
             </el-form-item>
-            <el-form-item label="流程编码"  prop="defKey$VLK">
-              <el-input v-model="query.defKey$VLK" placeholder="请输入KEY" />
+            <el-form-item label="流程编码" prop="defKey$VLK">
+              <el-input v-model="query.defKey$VLK" placeholder="请输入编码" />
             </el-form-item>
             <el-form-item>
               <el-button :icon="Search" type="primary" @click="search()">
@@ -47,7 +47,7 @@
         ab-tag-type="statusCss"
         label="状态"
         prop="statusDesc"
-        width="80"
+        width="90"
       />
       <ab-column label="创建时间" prop="createTime" width="160" />
       <ab-column ab-template="edit" fixed="right" label="管理" width="160" />

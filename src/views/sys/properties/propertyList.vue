@@ -3,7 +3,7 @@
     <el-container>
       <el-aside class="left-tree">
         <ab-dict-tree
-          v-model="query.typeCode$VEQ"
+          v-model="query.typeCode$VIN"
           type-code="property"
           @node-click="searchResetPage()"
         />
@@ -29,7 +29,7 @@
                       placeholder="请输入参数名"
                     />
                   </el-form-item>
-                  <el-form-item label="编码"  label-width="62px" prop="code$VLK">
+                  <el-form-item label="编码" label-width="62px" prop="code$VLK">
                     <el-input
                       v-model="query.code$VLK"
                       placeholder="请输入编码"
@@ -37,8 +37,8 @@
                   </el-form-item>
                   <el-form-item
                     v-if="collapse"
-                    label-width="62px"
                     label="环境"
+                    label-width="62px"
                     prop="environment$VLK"
                   >
                     <ab-select-tree
@@ -70,6 +70,7 @@
               <el-col class="left-panel">
                 <el-space>
                   <router-link
+                    v-ab-btn-rights:properties_add
                     :to="{
                       name: 'PropertyEdit',
                       query: { typeCode: query.typeCode$VEQ },
@@ -78,6 +79,7 @@
                     <el-button :icon="Plus" type="primary">添加</el-button>
                   </router-link>
                   <el-button
+                    v-ab-btn-rights:properties_del
                     :disabled="!selectedData || selectedData.length == 0"
                     :icon="Delete"
                     type="danger"
@@ -103,7 +105,13 @@
             <ab-column label="参数名" min-width="80" prop="name" />
             <ab-column label="编码" min-width="80" prop="code" />
             <ab-column label="描述" min-width="120" prop="desc" />
-            <ab-column label="更新时间" prop="updateTime" width="160" />
+            <ab-column
+              ab-date-formatter="yyyy-MM-dd HH:mm"
+              label="更新时间"
+              prop="updateTime"
+              width="160"
+            />
+            <ab-column label="更新人" width="120" prop="updater" />
             <ab-column
               ab-template="environment"
               label="环境"
@@ -125,15 +133,17 @@
               ab-template="edit"
               fixed="right"
               label="操作"
-              width="160"
+              width="140"
             />
             <template #edit="{ scope }">
               <router-link
+                v-ab-btn-rights:properties_edit
                 :to="{ name: 'PropertyEdit', query: { id: scope.row.id } }"
               >
                 <el-button text type="primary">编辑</el-button>
               </router-link>
               <el-button
+                v-ab-btn-rights:properties_del
                 text
                 type="primary"
                 @click="
@@ -177,7 +187,7 @@
         name$VLK: '',
         code$VLK: '',
         environment$VLK: '',
-        typeCode$VEQ: '',
+        typeCode$VIN: '',
       })
 
       const envCss = (env: string) => {

@@ -66,7 +66,7 @@
 
 <script lang="ts">
   // eslint-disable-next-line no-unused-vars
-  import { reactive, defineComponent, watch,onMounted } from 'vue'
+  import { reactive, defineComponent, getCurrentInstance } from 'vue'
   import { flowIconColorList } from './components/myTaskConfig'
   import { Search } from '@element-plus/icons-vue'
   import { bpmApi, svgIcon, sysApi } from 'agilebpm'
@@ -85,15 +85,27 @@
         flowIconColorList: flowIconColorList,
         timer: null as any,
       })
+      // @ts-ignore
+      const { proxy } = getCurrentInstance()
 
       const searchFn = (name: string) => {
+        // 如果url上有参数typeGroup
+        if (
+          proxy.$route.query.typeGroup &&
+          proxy.$route.query.typeGroup.length > 0
+        ) {
+          return
+        }
+
+        if (info.timer) {
+          clearTimeout(info.timer)
+        }
+
         if (!name) {
           info.serachMap = info.definitionMap
           return
         }
-        if (info.timer) {
-          clearTimeout(info.timer)
-        }
+
         info.timer = setTimeout(() => {
           const result = {}
           for (const key in info.definitionMap) {
@@ -123,7 +135,6 @@
         }
 
         const typeList: any = await sysApi.dict.getDictListByCode('flowType')
-
         if (!typeList || !typeList.length || typeList.length === 0) {
           info.definitionMap['未知分类'] = definitList
           info.serachMap = info.definitionMap
@@ -169,6 +180,19 @@
 
         info.definitionMap = resultMap
         info.serachMap = info.definitionMap
+
+        // 如果url上有参数typeGroup
+        if (
+          proxy.$route.query.typeGroup &&
+          proxy.$route.query.typeGroup.length > 0
+        ) {
+          const name = typeList.filter(
+            (item: any) => item.code == proxy.$route.query.typeGroup
+          )[0].name
+          const obj = {}
+          obj[name] = info.serachMap[name]
+          info.serachMap = obj
+        }
       }
 
       onMounted(() => {

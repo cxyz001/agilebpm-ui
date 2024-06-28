@@ -1,6 +1,6 @@
 {
   "name": "abDesigner",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "description": "流程设计器",
   "main": "bpmn-designer.umd.min.js",
   "scripts": {

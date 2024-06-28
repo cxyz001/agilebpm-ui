@@ -1,8 +1,8 @@
 {
-  "name": "abViewComponents",
-  "version": "1.0.0",
-  "description": "部分视图的组件库,用于低代码应用服务的呈现",
-  "main": "view-components.umd.min.js",
+  "name": "abLayoutDesigner",
+  "version": "1.8.0",
+  "description": "布局设计器",
+  "main": "layout-designer.umd.min.js",
   "scripts": {
   },
   "keywords": [],

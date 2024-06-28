@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside class="left-tree">
+      <el-aside v-if="!info.typeGroup" class="left-tree">
         <flow-type-tree
           v-model="randomModel"
           :tree-url="bpmApi.myTask.todoListTypeTreeUrl"
@@ -56,15 +56,15 @@
             <ab-column label="任务标题" min-width="120" prop="title" />
             <ab-column label="任务名称" prop="name" width="120" />
             <ab-column
-              ab-tag-type="statusLabelCss"
+              ab-tag-type="statusCss"
               label="状态"
-              prop="statusValue"
+              prop="statusDesc"
               width="80"
             />
             <ab-column
-              ab-tag-type="taskTypeLabelCss"
+              ab-tag-type="typeCss"
               label="类型"
-              prop="taskTypeValue"
+              prop="typeDesc"
               width="95"
             />
             <ab-column ab-template="priority" label="紧急程度" width="85" />
@@ -103,7 +103,11 @@
               <router-link
                 :to="{
                   name: 'BpmTaskComplate',
-                  query: { id: scope.row.id, backR: 'BpmMyTaskTodoList' },
+                  query: {
+                    id: scope.row.id,
+                    type: 'taskId',
+                    backR: 'BpmMyTaskTodoList',
+                  },
                 }"
               >
                 <el-button text type="primary">办理</el-button>
@@ -116,7 +120,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { reactive, defineComponent, getCurrentInstance,ref } from 'vue'
+  import { reactive, defineComponent, getCurrentInstance } from 'vue'
   import { abTableMix, bpmApi, abUtil } from 'agilebpm'
   import flowTypeTree from './components/flow-type-tree.vue'
   import {
@@ -134,13 +138,25 @@
       // 查询条件定义，如果ts 需要定义所有参数，这里覆盖父类，不是的话可以不用设置，父类已经定义了query 对象
       const query: any = reactive({
         'task.name$VLK': '',
-        'def.typeCode$VEQ': '',
+        'def.typeCode$VIN': '',
         'def.key$VEQ': '',
         title$VLK: '',
       })
+
       const randomModel = ref('')
       // @ts-ignore
       const { proxy } = getCurrentInstance()
+      const info: any = reactive({
+        typeGroup: false,
+      })
+      if (
+        proxy.$route.query.typeGroup &&
+        proxy.$route.query.typeGroup.length > 0
+      ) {
+        info.typeGroup = true
+        query['def.typeCode$VIN'] = proxy.$route.query.typeGroup
+      }
+
       const custFormat = (value: number) => {
         if (!value) return
         if (value < 51) {
@@ -175,20 +191,20 @@
 
       const searchData = (type: string, value: string) => {
         if (type === 'default') {
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
           query['def.key$VEQ'] = null
           proxy.$refs['abTable'].getData()
           return
         }
         if (type === 'flow') {
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
           query['def.key$VEQ'] = value
           proxy.$refs['abTable'].getData()
           return
         }
         if (type === 'tree') {
           query['def.key$VEQ'] = null
-          query['def.typeCode$VEQ'] = value
+          query['def.typeCode$VIN'] = value
           proxy.$refs['abTable'].getData()
         }
       }
@@ -197,6 +213,7 @@
         custFormat,
         searchData,
         query,
+        info,
         bpmApi,
         Search,
         RefreshRight,

@@ -9,6 +9,7 @@
       />
       <ab-load v-model="info.data" :url="sysApi.script.scriptGet" />
       <el-button
+        v-ab-btn-rights:script_test
         style="margin-left: 20px"
         type="primary"
         @click="scriptTest(info.data.name, info.data.script)"
@@ -94,6 +95,10 @@
   })
 
   const scriptTest = (name: string, script: string) => {
+    if (!script || script === '') {
+      ElMessage.warning('请输入脚本')
+      return
+    }
     sysApi.script.scriptTest(name, script).then((result: any) => {
       ElMessage({
         message: result.data,

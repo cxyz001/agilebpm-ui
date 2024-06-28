@@ -52,7 +52,7 @@
 <script type="ts" setup>
   import { defineEmits, reactive, ref, toRefs } from "vue";
   import { sysApi, authApi, abUtil,postData } from 'agilebpm'
-  import { ElMessage } from "element-plus/es";
+  import { ElMessage } from "element-plus";
 
   const props = defineProps({
     roleRes: { required: true, type: Object },

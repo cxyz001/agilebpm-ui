@@ -43,12 +43,13 @@
               </el-col>
               <el-col class="left-panel">
                 <el-button
+                  v-ab-btn-rights:instance_del
                   :disabled="!selectedData || selectedData.length == 0"
                   :icon="Delete"
                   type="danger"
                   @click="delBySeletedIds(bpmApi.instance.bpmInstanceDeleteUrl)"
                 >
-                  删除
+                  批量删除
                 </el-button>
               </el-col>
             </el-row>
@@ -94,14 +95,16 @@
             />
             <template #edit="{ scope }">
               <router-link
+                v-ab-btn-rights:instance_detail
                 :to="{
-                  name: 'BpmInstanceDetail',
-                  query: { instId: scope.row.id },
+                  name: 'BpmInstanceListDetail',
+                  query: { id: scope.row.id },
                 }"
               >
                 <el-button text type="primary">详情</el-button>
               </router-link>
               <el-button
+                v-ab-btn-rights:instance_del
                 text
                 type="primary"
                 @click="
@@ -114,6 +117,7 @@
                 删除
               </el-button>
               <el-button
+                v-ab-btn-rights:instance_imageInfo
                 text
                 type="primary"
                 @click="openImageDialog(scope.row.id)"
@@ -128,6 +132,7 @@
                   scope.row.status != 'manualEnd' &&
                   scope.row.status != 'revoke_end'
                 "
+                v-ab-btn-rights:instance_toForbidden
                 text
                 type="primary"
                 @click="forbidden(scope.row)"
@@ -136,6 +141,7 @@
               </el-button>
               <el-button
                 v-if="scope.row.suspensionState === 1"
+                v-ab-btn-rights:instance_toForbidden
                 text
                 type="primary"
                 @click="forbidden(scope.row)"
@@ -144,6 +150,13 @@
               </el-button>
             </template>
           </ab-table>
+          <bpm-image-dialog
+            v-if="flowImageInfo.showImageDialog"
+            :bpm-data="flowImageInfo.bpmData"
+            :is-show="flowImageInfo.showImageDialog"
+            title="流程图"
+            @dialog-cancel="dialogCancel"
+          />
         </div>
       </el-main>
     </el-container>
@@ -152,7 +165,7 @@
 <script lang="ts">
   // eslint-disable-next-line no-unused-vars
   import { reactive, defineComponent, getCurrentInstance } from 'vue'
-  import { abTableMix, bpmApi, abUtil } from 'agilebpm'
+  import { abTableMix, bpmApi, abUtil, BpmImageDialog } from 'agilebpm'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import flowTypeTree from '../myTask/components/flow-type-tree.vue'
   import {
@@ -165,7 +178,7 @@
 
   export default defineComponent({
     name: 'BpmInstanceList',
-    components: { flowTypeTree },
+    components: { BpmImageDialog, flowTypeTree },
     mixins: [abTableMix],
 
     setup() {
@@ -174,7 +187,7 @@
       const query = reactive({
         title$VLK: '',
         defKey$VLK: '',
-        typeCode$VEQ: '',
+        typeCode$VIN: '',
         defKey$VEQ: '',
       })
       const flowImageInfo = reactive({
@@ -196,14 +209,20 @@
       }
 
       const forbidden = (row: any) => {
-        ElMessageBox.confirm(`确定要挂起流程${row.title}吗`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(async () => {
+        ElMessageBox.confirm(
+          row.suspensionState == 1
+            ? `确定要取消挂起流程${row.title}吗`
+            : `确定要挂起流程${row.title}吗`,
+          '提示',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+        ).then(async () => {
           const forbiddenFlag = row.suspensionState == 1 ? false : true
           await bpmApi.instance.toForbidden(row.id, forbiddenFlag).then(
-            (result) => {
+            (result: any) => {
               proxy.search()
               ElMessage({
                 type: 'success',
@@ -219,13 +238,13 @@
       const searchData = (type: string, value: string) => {
         if (type === 'default') {
           query.defKey$VEQ = ''
-          query.typeCode$VEQ = ''
+          query.typeCode$VIN = ''
         }
         if (type === 'flow') {
           query.defKey$VEQ = value
-          query.typeCode$VEQ = ''
+          query.typeCode$VIN = ''
         } else if (type === 'tree') {
-          query.typeCode$VEQ = value
+          query.typeCode$VIN = value
           query.defKey$VEQ = ''
         }
         proxy.search()

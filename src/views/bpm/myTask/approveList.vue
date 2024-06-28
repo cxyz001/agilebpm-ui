@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside class="left-tree">
+      <el-aside v-if="!info.typeGroup" class="left-tree">
         <flow-type-tree
           :tree-url="bpmApi.myTask.approveListTypeTreeUrl"
           @node-click="searchData"
@@ -75,6 +75,17 @@
               width="95"
             />
             <ab-column
+              label="当前环节"
+              ab-template="pendingApprovalTask"
+              width="140"
+            />
+            <template #pendingApprovalTask="{ scope }">
+              <PendingApprovalTaskPopover
+                v-if="scope.row.pendingApprovalTasks"
+                :data="scope.row.pendingApprovalTasks"
+              />
+            </template>
+            <ab-column
               ab-template="edit"
               fixed="right"
               label="操作"
@@ -86,7 +97,8 @@
                 :to="{
                   name: 'BpmInstanceDetail',
                   query: {
-                    opId: scope.row.id,
+                    id: scope.row.id,
+                    type: 'opId',
                   },
                 }"
               >
@@ -111,37 +123,49 @@
     RefreshRight,
     InfoFilled,
   } from '@element-plus/icons-vue'
+  import PendingApprovalTaskPopover from './components/pending-approval-task-popover.vue'
 
   export default defineComponent({
     name: 'BpmMyApproveList',
-    components: { flowTypeTree },
+    components: { PendingApprovalTaskPopover, flowTypeTree },
     mixins: [abTableMix],
     setup() {
       // 查询条件定义，如果ts 需要定义所有参数，这里覆盖父类，不是的话可以不用设置，父类已经定义了query 对象
       const query: any = reactive({
         defName$VLK: '',
-        'def.typeCode$VEQ': '',
+        'def.typeCode$VIN': '',
         defKey$VEQ: '',
         title$VLK: '',
       })
       // @ts-ignore
       const { proxy } = getCurrentInstance()
+      const info: any = reactive({
+        typeGroup: false,
+      })
+      if (
+        proxy.$route.query.typeGroup &&
+        proxy.$route.query.typeGroup.length > 0
+      ) {
+        info.typeGroup = true
+        query['def.typeCode$VIN'] = proxy.$route.query.typeGroup
+      }
       const searchData = (type: string, value: string) => {
         if (type === 'default') {
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
           query['def.key$VEQ'] = null
         }
         if (type === 'flow') {
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
           query.defKey$VEQ = value
         } else if (type === 'tree') {
-          query['def.typeCode$VEQ'] = value
+          query['def.typeCode$VIN'] = value
           query.defKey$VEQ = null
         }
         proxy.search()
       }
       return {
         query,
+        info,
         bpmApi,
         abUtil,
         searchData,

@@ -3,14 +3,14 @@
     <div ref="titleForm">
       <el-space>
         <el-button :icon="Back" type="primary" @click="back">返回</el-button>
-        <el-button
+        <!-- <el-button
           :disabled="!selectedData || selectedData.length == 0"
           :icon="Download"
           type="primary"
           @click="exportFn"
         >
           导出
-        </el-button>
+        </el-button> -->
       </el-space>
     </div>
 
@@ -59,11 +59,16 @@
       <ab-column ab-template="edit" fixed="right" label="操作" width="315" />
       <template #edit="{ scope }">
         <el-button
-          v-ab-btn-rights:bpmDefinition_bpmDesigner
+          v-show="scope.row.processEditor !== 'sim'"
+          v-ab-btn-rights:bpmDefinition_preview
           text
           type="primary"
-          @click="showDesign(scope.row)"
+          @click="openOverView(scope.row)"
         >
+          配置预览
+        </el-button>
+
+        <el-button text type="primary" @click="showDesign(scope.row)">
           设计
         </el-button>
         <router-link :to="`/bpm/flowStart/${scope.row.key}`">
@@ -71,6 +76,23 @@
         </router-link>
         <el-button
           v-if="scope.row.isMain === 0"
+          v-show="scope.row.processEditor !== 'sim'"
+          v-ab-btn-rights:bpmDefinition_setMain
+          text
+          type="primary"
+          @click="
+            sendAction(
+              bpmApi.bpmDefinition.bpmDefinitionSetMainUrl + scope.row.id,
+              `确定把版本 ${scope.row.version} 设为主版本吗?`
+            )
+          "
+        >
+          设为主版本
+        </el-button>
+        <el-button
+          v-if="scope.row.isMain === 0"
+          v-show="scope.row.processEditor === 'sim'"
+          v-ab-btn-rights:simDefinition_setMain
           text
           type="primary"
           @click="
@@ -84,6 +106,11 @@
         </el-button>
       </template>
     </ab-table>
+    <bpm-definition-overall-view
+      v-model="overViewInfo.isShow"
+      :def-id="overViewInfo.defId"
+      :title="overViewInfo.title"
+    />
     <ab-designer
       v-if="designInfo.show"
       v-model="designInfo.show"
@@ -96,14 +123,16 @@
 <script lang="ts">
   // eslint-disable-next-line no-unused-vars
   import { reactive, defineComponent, getCurrentInstance } from 'vue'
-  import { abTableMix, bpmApi } from 'agilebpm'
+  import { abTableMix, bpmApi, abTools } from 'agilebpm'
   import { Back, Download } from '@element-plus/icons-vue'
-  import abDesigner from 'abDesigner' 
-  
+  import { useTabsStore } from '@/store/modules/tabs'
+  // import abDesigner from 'abDesigner'
+
+  import bpmDefinitionOverallView from './bpmDefinitionOverViewEdit.vue'
 
   export default defineComponent({
     name: 'BpmDefinitionVersionList',
-    components: {  abDesigner },
+    components: { bpmDefinitionOverallView },
     mixins: [abTableMix],
     setup() {
       // @ts-ignore
@@ -123,8 +152,7 @@
         show: false,
         defId: '',
       })
-   
-      const route = useRoute()
+      const { delVisitedRoute } = useTabsStore()
       const back = () => {
         proxy.$router ? proxy.$router.back() : window.history.back()
       }
@@ -152,8 +180,9 @@
         if (row.processEditor == 'sim') {
           window.open(`/simpleWF?id=${row.id}&mode=diyBo`)
         } else {
-          designInfo.defId = row.id
-          designInfo.show = true
+          window.open(
+            abTools.getResolveUrl(`/bpmDesigner?defId=${row.id}`, proxy)
+          )
         }
       }
       const closeDefinition = () => {

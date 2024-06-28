@@ -9,8 +9,8 @@
                 <el-form
                   ref="queryForm"
                   :inline="true"
-                  :model="query"
                   label-width="62px"
+                  :model="query"
                   @submit.prevent
                 >
                   <el-form-item label="标题" prop="b.title$VLK">
@@ -118,9 +118,8 @@
                 :to="{
                   name: 'BpmInstanceDetail',
                   query: {
-                    instId: scope.row.instId,
-                    carbonId: scope.row.id,
-                    nodeKey: scope.row.taskKey,
+                    id: scope.row.id,
+                    type: 'carbonId',
                   },
                 }"
               >

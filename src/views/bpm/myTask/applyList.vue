@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside class="left-tree">
+      <el-aside v-if="!info.typeGroup" class="left-tree">
         <flow-type-tree
           :tree-url="bpmApi.myTask.applyListTypeTreeUrl"
           @node-click="searchData"
@@ -70,8 +70,17 @@
               prop="statusDesc"
               width="95"
             />
+            <ab-column
+              label="当前环节"
+              ab-template="pendingApprovalTask"
+              width="140"
+            />
+            <template #pendingApprovalTask="{ scope }">
+              <PendingApprovalTaskPopover
+                :data="scope.row.pendingApprovalTasks"
+              />
+            </template>
             <ab-column label="创建时间" prop="createTime" width="180" />
-            <ab-column label="创建人" prop="creator" width="120" />
             <ab-column label="完成时间" prop="endTime" width="160" />
             <ab-column
               ab-template="edit"
@@ -84,7 +93,8 @@
                 :to="{
                   name: 'BpmInstanceDetail',
                   query: {
-                    instId: scope.row.id,
+                    id: scope.row.id,
+                    type: 'instIdStart',
                   },
                 }"
               >
@@ -104,38 +114,49 @@
   import { abTableMix, bpmApi, abUtil, sysApi } from 'agilebpm'
   import flowTypeTree from './components/flow-type-tree.vue'
   import { Search, Plus, RefreshRight } from '@element-plus/icons-vue'
+  import PendingApprovalTaskPopover from './components/pending-approval-task-popover.vue'
 
   export default defineComponent({
     name: 'BpmMyApplyList',
-    components: { flowTypeTree },
+    components: { PendingApprovalTaskPopover, flowTypeTree },
     mixins: [abTableMix],
     setup() {
       const query: any = reactive({
         title$VLK: '',
         defKey$VEQ: '',
-        'def.typeCode$VEQ': '',
+        'def.typeCode$VIN': '',
         'inst.status$VEQ': '',
       })
       // @ts-ignore
       const { proxy } = getCurrentInstance()
+      const info: any = reactive({
+        typeGroup: false,
+      })
+      if (
+        proxy.$route.query.typeGroup &&
+        proxy.$route.query.typeGroup.length > 0
+      ) {
+        info.typeGroup = true
+        query['def.typeCode$VEQ'] = proxy.$route.query.typeGroup
+      }
       const statusList = ref([])
       onMounted(() => {
         sysApi.tools
           .getEnum('com.dstz.bpm.api.enums.InstanceStatus')
-          .then((result) => {
+          .then((result: any) => {
             statusList.value = result.data
           })
       })
       const searchData = (type: string, value: string) => {
         if (type === 'default') {
           query.defKey$VEQ = null
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
         }
         if (type === 'flow') {
           query.defKey$VEQ = value
-          query['def.typeCode$VEQ'] = null
+          query['def.typeCode$VIN'] = null
         } else if (type === 'tree') {
-          query['def.typeCode$VEQ'] = value
+          query['def.typeCode$VIN'] = value
           query.defKey$VEQ = null
         }
         proxy.search()
@@ -145,11 +166,11 @@
 
       return {
         query,
+        info,
         bpmApi,
         statusList,
         searchData,
         abUtil,
-
         Search,
         Plus,
         RefreshRight,

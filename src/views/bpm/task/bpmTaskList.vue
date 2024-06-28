@@ -56,16 +56,16 @@
             <ab-column label="候选人" min-width="200" prop="assigneeNames" />
             <ab-column
               ab-tag-effect="plain"
-              ab-tag-type="taskTypeLabelCss"
+              ab-tag-type="typeCss"
               label="类型"
-              prop="taskTypeValue"
+              prop="typeDesc"
               width="110"
             />
             <ab-column
               ab-tag-effect="dark"
-              ab-tag-type="statusLabelCss"
+              ab-tag-type="statusCss"
               label="状态"
-              prop="statusValue"
+              prop="statusDesc"
               width="100"
             />
             <ab-column
@@ -84,6 +84,7 @@
             <template #edit="{ scope }">
               <el-button
                 v-if="scope.row.status == 'designate'"
+                v-ab-btn-rights:task_cancelAssign
                 text
                 type="primary"
                 @click="
@@ -97,6 +98,7 @@
               </el-button>
               <ab-cust-dialog
                 v-else
+                v-ab-btn-rights:task_assign
                 dialog-key="userSelector"
                 :dialog-setting="{ multiple: 0 }"
                 :extra-data="scope.row.id"
@@ -108,6 +110,7 @@
                 指派候选人
               </ab-cust-dialog>
               <router-link
+                v-ab-btn-rights:task_complate
                 :to="{
                   name: 'BpmTaskComplate',
                   query: { id: scope.row.id, backR: 'BpmTaskList' },
@@ -115,6 +118,14 @@
               >
                 <el-button text type="primary">处理</el-button>
               </router-link>
+              <el-button
+                v-ab-btn-rights:task_imageInfo
+                text
+                type="primary"
+                @click="openImageDialog(scope.row)"
+              >
+                流程图
+              </el-button>
             </template>
           </ab-table>
           <bpm-image-dialog
@@ -134,18 +145,18 @@
   // eslint-disable-next-line no-unused-vars
   import { reactive, defineComponent, onMounted, getCurrentInstance } from 'vue'
   import { ElMessage } from 'element-plus'
-  import { abTableMix, bpmApi } from 'agilebpm'
+  import { abTableMix, bpmApi, BpmImageDialog } from 'agilebpm'
   import { Search, RefreshRight } from '@element-plus/icons-vue'
   import flowTypeTree from '../myTask/components/flow-type-tree.vue'
   export default defineComponent({
     name: 'BpmTaskList',
-    components: {  flowTypeTree },
+    components: { BpmImageDialog, flowTypeTree },
     mixins: [abTableMix],
     setup() {
       const query = reactive({
         name$VLK: '',
         title$VLK: '',
-        typeCode$VEQ: '',
+        typeCode$VIN: '',
         defId$VEQ: '',
       })
       const flowImageInfo = reactive({
@@ -153,8 +164,9 @@
         bpmData: {
           actionData: {
             instanceId: '',
+            taskId: '',
           },
-        } as BpmData,
+        },
       })
 
       // @ts-ignore
@@ -164,15 +176,18 @@
         if (!userList || userList.length == 0) {
           ElMessage.warning('请指定人员！')
         }
-        bpmApi.task.assignTask(taskId, userList[0].id).then((reset) => {
+        bpmApi.task.assignTask(taskId, userList[0].id).then((reset: any) => {
           ElMessage.success('指派成功！')
           proxy.search()
         })
       }
 
-      const openImageDialog = (instaceId: string) => {
+      const openImageDialog = (row: any) => {
         flowImageInfo.showImageDialog = true
-        flowImageInfo.bpmData.actionData.instanceId = instaceId
+        flowImageInfo.bpmData.actionData = {
+          instanceId: row.instId,
+          taskId: row.id,
+        }
       }
 
       const dialogCancel = (isShow: boolean) => {
@@ -182,16 +197,16 @@
       const searchData = (type: string, value: string) => {
         if (type === 'default') {
           query.defId$VEQ = ''
-          query.typeCode$VEQ = ''
+          query.typeCode$VIN = ''
         }
         if (type === 'flow') {
           query.defId$VEQ = value
         } else if (type === 'tree') {
-          query.typeCode$VEQ = value
+          query.typeCode$VIN = value
         }
         proxy.search()
         query.defId$VEQ = ''
-        query.typeCode$VEQ = ''
+        query.typeCode$VIN = ''
       }
 
       return {

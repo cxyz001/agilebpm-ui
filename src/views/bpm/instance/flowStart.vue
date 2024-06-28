@@ -8,12 +8,11 @@
       />
     </el-header>
     <el-divider class="dividermar" />
-    <el-main v-if="info.bpmData.defName">
+    <el-main v-if="info.bpmData.defName" :style="{ height: info.height }">
       <ab-url-form
         v-if="info.bpmData.bpmForm.type == 'url'"
         ref="url"
         :bpm-form="info.bpmData.bpmForm"
-   
       />
       <cust-form v-else ref="inner" :form-data="info.formData" />
     </el-main>
@@ -21,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+  import { useTabsStore } from '@/store/modules/tabs'
   import {
     abForm as custForm,
     bpmButtons,
@@ -31,14 +30,15 @@ import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
     abTools,
   } from 'agilebpm'
 
-  import { getCurrentInstance, onMounted, reactive, Ref } from 'vue'
+  import { getCurrentInstance, Ref } from 'vue'
   const { proxy } = abTools.useCurrentInstance()
   const vueContext = getCurrentInstance()
-  const { changeTabsMeta } = useAbStoreAdapter()
+  const { changeTabsMeta } = useTabsStore()
   const defKey = vueContext?.proxy?.$route.params.defKey
   const info: any = reactive({
-    bpmData: {} ,
+    bpmData: {} as Ref<BpmData>,
     formData: {},
+    height: `${window.innerHeight - 315}px`,
   })
 
   const bizId = vueContext?.proxy?.$route.query.bizId

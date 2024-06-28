@@ -19,10 +19,10 @@
 
 <script lang="ts" setup>
   import { bpmApi } from 'agilebpm'
-  import { PropType ,ref,reactive,onMounted,watch} from 'vue'
+  import { PropType } from 'vue'
   import { ElMessageBox } from 'element-plus'
 
-  interface FlowTypeTree { 
+  interface FlowTypeTree {
     countName: string
     count: number
     name: string
@@ -44,6 +44,7 @@
   const pageData = reactive({
     treeData: [] as any[],
     defaultExpandKeys: [] as any[],
+    codeStr: '',
   })
 
   const getData = async () => {
@@ -68,11 +69,23 @@
     }
   )
 
+  // 遍历树形数据
+  const traverseTree = (node: any) => {
+    pageData.codeStr += `${node.code},`
+    if (node.children) {
+      node.children.forEach((child: any) => {
+        traverseTree(child) // 递归调用遍历子节点
+      })
+    }
+  }
   const handleNodeClick = (data: FlowTypeTree) => {
     if (data.typeCode === 'default') {
       emit('nodeClick', 'default', null)
     } else {
-      emit('nodeClick', data.type, data.code)
+      pageData.codeStr = ''
+      traverseTree(data)
+      pageData.codeStr = pageData.codeStr.slice(0, -1)
+      emit('nodeClick', data.type, pageData.codeStr)
     }
   }
   const defaultProps = {

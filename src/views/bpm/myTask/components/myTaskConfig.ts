@@ -90,3 +90,16 @@ export const flowIconColorList = [
     '#7260AF',
   ], //神秘魅紫
 ]
+
+export const showTaskDynamic = (bpmData: any) => {
+  if (!bpmData) return false
+  if (!bpmData.ensureCandidate) return false
+  if (!bpmData.bpmInstance) return false
+  if (!bpmData.bpmInstance.status) return false
+  if (bpmData.bpmInstance.status == 'draft') return false
+  return true
+}
+
+export const isSmallScreenWidth = (windowWidth: number) => {
+  return windowWidth < 1400
+}

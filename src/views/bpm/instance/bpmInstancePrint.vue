@@ -7,12 +7,17 @@
             打印
           </el-button>
           <el-button type="primary" @click="closeWindow">取消</el-button>
- 
+          <el-checkbox
+            v-model="info.showApproveHistory"
+            label="打印审批历史"
+            size="large"
+          />
         </el-space>
       </el-header>
+
       <el-divider class="dividermar" />
       <div id="printTest" ref="printTest" class="print">
-        <el-main>
+        <el-main v-if="info.bpmData.bpmForm && info.bpmData.bpmForm.type">
           <ab-url-form
             v-if="info.bpmData.bpmForm.type == 'url'"
             ref="url"
@@ -20,13 +25,23 @@
           />
           <cust-form v-else ref="inner" :form-data="info.formData" />
         </el-main>
+        <el-footer>
+          <div v-if="info.showApproveHistory && info.bpmData.bpmInstance">
+            <h4>审批历史</h4>
+            <approve-history-table
+              :instance-id="historyParam.instId"
+              :opinion-id="historyParam.opId"
+              :task-id="historyParam.taskId"
+            />
+          </div>
+        </el-footer>
       </div>
     </el-container>
-  </div>  
+  </div>
 </template>
 
 <script lang="ts" setup>
-  import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+  import { useTabsStore } from '@/store/modules/tabs'
   import {
     abForm as custForm,
     bpmButtons,
@@ -34,18 +49,39 @@
     bpmTools,
     abTools,
     bpmApi,
+    ApproveHistoryTable,
   } from 'agilebpm'
 
   import { getCurrentInstance, Ref } from 'vue'
-  const { changeTabsMeta } = useAbStoreAdapter()
+  const { changeTabsMeta } = useTabsStore()
 
+  const spacer = h(ElDivider, { direction: 'vertical' })
   const vueContext = getCurrentInstance()
 
   const info: any = reactive({
-    bpmData: {},
-    formData: {},
+    bpmData: {} as any,
+    formData: {} as any,
+    showApproveHistory: false,
     instanceId: '',
     nodeKey: '',
+  })
+
+  const historyParam = computed(() => {
+    const resultParam = {
+      instId: info.bpmData.bpmInstance?.id,
+      taskId: info.bpmData.bpmTask?.id,
+    }
+    const newParam = getParam()
+
+    if (!newParam || !newParam.type) {
+      return resultParam
+    }
+    if (type == 'opId') {
+      resultParam.opId = newParam.id
+    } else if (type == 'taskId') {
+      resultParam.taskId = newParam.id
+    }
+    return resultParam
   })
   //这里是打印的配置项
   // const print = ref({
@@ -78,24 +114,56 @@
   // })
   const { proxy } = abTools.useCurrentInstance()
 
-  console.log('proxy.$route.query :::::::::::::::::: ', proxy.$route)
-  console.log('proxy.$route.query :::::::::::::::::: ', proxy.$route.query)
-  info.instanceId = proxy.$route.query.instanceId
-  info.nodeKey = proxy.$route.query.nodeKey
+  const instId = vueContext?.proxy?.$route.query.instId
+  const opId = vueContext?.proxy?.$route.query.opId
+  const bizId = vueContext?.proxy?.$route.query.bizId
+  const nodeKey = vueContext?.proxy?.$route.query.nodeKey
+  const carbonId = vueContext?.proxy?.$route.query.carbonId
+  const isStart = !(vueContext?.proxy?.$route.query.isStart == '0')
+  //id 就是taskId
+  const taskId = vueContext?.proxy?.$route.query.id
 
-  const { closeTab } = useAbStoreAdapter()
+  //使用新的方式获取打印表单
+  const id = vueContext?.proxy?.$route.query.id
+  const type = vueContext?.proxy?.$route.query.type
+
+  const { delVisitedRoute } = useTabsStore()
   const closeWindow = () => {
     const route = proxy.$route
-    closeTab(route.path)
+    delVisitedRoute(route.path)
     proxy.$router ? proxy.$router.back() : window.history.back()
   }
   const print = () => {
     window.print()
   }
 
-  onMounted(() => {
+  const getParam = () => {
+    if (id && type) {
+      return { id: id, type: type }
+    }
+
+    if (carbonId) {
+      return { id: carbonId, type: 'carbonId' }
+    }
+    if (bizId) {
+      return { id: bizId, type: 'bizId' }
+    }
+    if (opId) {
+      return { id: 'opId', type: 'opId' }
+    }
+    if (instId) {
+      let typeTemp = 'instId'
+      if (isStart) {
+        typeTemp = 'instIdStart'
+      }
+      return { id: 'instId', type: typeTemp }
+    }
+  }
+
+  const initData = () => {
+    const param = getParam()
     bpmApi.bpmData
-      .getInstData(info.instanceId, null, null, info.nodeKey)
+      .getInstDataNew(param.id, param.type, true)
       .then(({ data }) => {
         bpmTools.initBpmDataAndFormData(
           data,
@@ -103,15 +171,18 @@
           info.bpmData,
           info.formData
         )
+        info.bpmData.actionData.instanceId = data.bpmInstance.id
+
+        changeTabsMeta({
+          fullPath: proxy.$route.fullPath,
+          meta: { title: `实例详情-${data.bpmInstance.title}` },
+        })
       })
-    changeTabsMeta({
-      fullPath: proxy.$route.fullPath,
-      meta: { title: `打印` },
-    })
-  })
+  }
+  initData()
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   @media print {
     .noprint {
       display: none;

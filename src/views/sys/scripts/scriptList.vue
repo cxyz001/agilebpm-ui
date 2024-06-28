@@ -3,7 +3,7 @@
     <el-container>
       <el-aside class="left-tree">
         <ab-dict-tree
-          v-model="query.typeCode$VEQ"
+          v-model="query.typeCode$VIN"
           type-code="script"
           @node-click="searchResetPage()"
         />
@@ -46,6 +46,7 @@
               <el-col class="left-panel">
                 <el-space>
                   <router-link
+                    v-ab-btn-rights:script_add
                     :to="{
                       name: 'ScriptEdit',
                       query: { typeCode: query.typeCode$VEQ },
@@ -54,6 +55,7 @@
                     <el-button icon="Plus" type="primary">添加</el-button>
                   </router-link>
                   <el-button
+                    v-ab-btn-rights:script_del
                     :disabled="!selectedData || selectedData.length == 0"
                     :icon="Delete"
                     type="danger"
@@ -75,21 +77,30 @@
             :url="sysApi.script.scriptList"
           >
             <ab-column label="名称" min-width="80" prop="name" />
-            <ab-column label="备注" min-width="180" prop="desc" />
+            <ab-column label="备注" min-width="280" prop="desc" />
+            <ab-column
+              ab-date-formatter="yyyy-MM-dd HH:mm"
+              label="更新时间"
+              width="160"
+              prop="updateTime"
+            />
+            <ab-column label="更新人" width="160" prop="updater" />
             <ab-column
               ab-template="edit"
               fixed="right"
               label="操作"
               prop="key"
-              width="160"
+              width="140"
             />
             <template #edit="{ scope }">
               <router-link
+                v-ab-btn-rights:script_edit
                 :to="{ name: 'ScriptEdit', query: { id: scope.row.id } }"
               >
                 <el-button text type="primary">编辑</el-button>
               </router-link>
               <el-button
+                v-ab-btn-rights:script_del
                 text
                 type="primary"
                 @click="

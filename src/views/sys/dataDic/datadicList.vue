@@ -3,8 +3,8 @@
     <el-container>
       <el-aside class="left-tree">
         <ab-dict-tree
-          v-model="info.query.queryParam.typeCode$VEQ"
-          type-code="dictType"
+          v-model="info.query.queryParam.typeCode$VIN"
+          type-code="biz"
           @node-click="nodeClickFn"
         />
       </el-aside>
@@ -27,6 +27,13 @@
                       @keyup.enter.native="listFn()"
                     />
                   </el-form-item>
+                  <el-form-item label="字典编码" prop="code$VLK">
+                    <el-input
+                      v-model="info.query.queryParam.code$VLK"
+                      placeholder="请输入字典编码"
+                      @keyup.enter.native="listFn()"
+                    />
+                  </el-form-item>
                   <el-form-item>
                     <el-button :icon="Search" type="primary" @click="listFn()">
                       查询
@@ -38,7 +45,12 @@
                 </el-form>
               </el-col>
               <el-col class="left-panel">
-                <el-button :icon="Plus" type="primary" @click="addClickFn">
+                <el-button
+                  v-ab-btn-rights:dataDict_add
+                  :icon="Plus"
+                  type="primary"
+                  @click="addClickFn"
+                >
                   添加
                 </el-button>
               </el-col>
@@ -80,19 +92,22 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="创建日期"
+              format="yyyy-MM-dd HH:mm"
+              label="更新日期"
               min-width="120"
-              prop="createTime"
+              prop="updateTime"
             />
+            <el-table-column label="更新人" min-width="120" prop="updater" />
             <el-table-column
               align="left"
               fixed="right"
               label="操作"
               prop="key"
-              width="150"
+              width="140"
             >
               <template #default="scope">
                 <el-button
+                  v-ab-btn-rights:dataDict_edit
                   text
                   type="primary"
                   @click.stop="editClickFn(scope.row)"
@@ -101,6 +116,7 @@
                 </el-button>
                 <el-button
                   v-if="scope.row.isSystem !== 1"
+                  v-ab-btn-rights:dataDict_del
                   text
                   type="primary"
                   @click.stop="removeDict(scope.row)"
@@ -144,7 +160,6 @@
             （右键添加字典项）
           </p>
         </ab-tree>
-
         <div v-else>
           <el-empty description="请选择要维护的数据字典" :image-size="120" />
         </div>
@@ -165,7 +180,7 @@
           <ab-select-tree
             v-model="info.ruleForm.typeCode"
             :has-root="false"
-            type-code="dictType"
+            type-code="biz"
           />
         </el-form-item>
         <el-form-item
@@ -184,7 +199,11 @@
           prop="code"
           :rules="[{ required: true, message: '必填' }]"
         >
-          <el-input v-model="info.ruleForm.code" placeholder="请输入编码" :disabled="info.ruleForm.id"/>
+          <ab-code
+            v-model="info.ruleForm.code"
+            :disabled="info.ruleForm.id"
+            placeholder="请输入编码"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -210,7 +229,7 @@
         row-key="snRowKey"
         style="width: 100%"
       >
-        <el-table-column label="序号" prop="sn" width="90">
+        <el-table-column label="序号" prop="sn" width="80">
           <template #default="scope">
             <el-input v-model="scope.row.sn" :min="1" type="number" />
           </template>
@@ -229,7 +248,15 @@
             <el-input v-model="scope.row.code" placeholder="请输入" />
           </template>
         </el-table-column>
-
+        <el-table-column label="是否禁用" prop="sn" width="90">
+          <template #default="scope">
+            <el-switch
+              v-model="scope.row.disable"
+              :active-value="1"
+              :inactive-value="0"
+            />
+          </template>
+        </el-table-column>
         <el-table-column label="添加" prop="code" width="90">
           <template #header>
             <span>添加</span>
@@ -298,7 +325,7 @@
 </script>
 <script setup lang="ts">
   // eslint-disable-next-line no-unused-vars
-  import { reactive, defineComponent, ref, nextTick,watch,onMounted } from 'vue'
+  import { reactive, defineComponent, ref, nextTick } from 'vue'
   import {
     Search,
     Plus,
@@ -313,6 +340,8 @@
   const { proxy } = abTools.useCurrentInstance()
   // 查询条件定义，如果ts 需要定义所有参数，这里覆盖父类，不是的话可以不用设置，父类已经定义了query 对象
   const ruleFormRef = ref<FormInstance>()
+  import { storage } from '@/config'
+
   const info: any = reactive({
     tableHeight: `${window.innerHeight - 340}px`,
     loading: false,
@@ -324,7 +353,7 @@
       sortOrder: '',
       queryParam: {
         name$VLK: '',
-        typeCode$VEQ: '',
+        typeCode$VIN: '',
       },
     },
     tableData: [],
@@ -380,7 +409,7 @@
         info.ruleForm.name = ''
         info.ruleForm.code = ''
         info.ruleForm.typeName = info.typeName
-        info.ruleForm.typeCode = info.query.queryParam.typeCode$VEQ
+        info.ruleForm.typeCode = info.query.queryParam.typeCode$VIN
       }
       nextTick(() => {
         ruleFormRef.value.clearValidate()
@@ -422,20 +451,19 @@
   const resetquery = () => {
     info.query.currentPage = 1
     info.query.queryParam.name$VLK = ''
+    info.query.queryParam.code$VLK = ''
     listFn()
   }
   // 点击左侧树节点
   const nodeClickFn = (row: any) => {
     info.query.currentPage = 1
     if (row.parentId == '0') {
-      info.query.queryParam.typeCode$VEQ = ''
+      info.query.queryParam.typeCode$VIN = ''
       info.ruleForm.typeCode = ''
       info.ruleForm.typeName = ''
       info.typeName = ''
       listFn()
       return
-    } else {
-      info.query.queryParam.typeCode$VEQ = row.code
     }
     if (row.code) {
       info.ruleForm.typeCode = row.code
@@ -452,7 +480,7 @@
   // 点击添加
   const addClickFn = () => {
     info.ruleForm = { dictType: 'dict' }
-    info.ruleForm.typeCode = info.query.queryParam.typeCode$VEQ
+    info.ruleForm.typeCode = info.query.queryParam.typeCode$VIN
     info.dialogVisible = true
   }
   // 点击编辑
@@ -460,6 +488,7 @@
     info.dialogVisible = true
     info.ruleForm = JSON.parse(JSON.stringify(row))
   }
+
   // 点击删除
   const removeDict = (row: any) => {
     if (row.id) {
@@ -673,6 +702,18 @@
 
   onMounted(() => {
     getDataTree()
-    listFn()
+
+    let b = true //是否要默认加载数据
+    if (storage && 'localStorage' == storage) {
+      if (localStorage.getItem('focusModeData')) {
+        const focusModeData = JSON.parse(localStorage.getItem('focusModeData'))
+        if (focusModeData.open) {
+          b = false //配置了专注模式且页面有分类则不需要默认加载（因为在ab-dict-tree）自动加载了
+        }
+      }
+    }
+    if (b) {
+      listFn()
+    }
   })
 </script>
