@@ -72,6 +72,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/bpmDesigner',
+      name: 'BpmDesigner',
+      component: () => import('@/views/bpm/definition/bpmDesign.vue'),
+      meta: {
+        title: '流程设计器',
+        noKeepAlive: true,
+      },
+    },
+    {
       path: '/bizForm/preview/:code',
       name: 'BizFormPreview',
       component: () => import('@/views/biz/bizForm/formPreview.vue'),

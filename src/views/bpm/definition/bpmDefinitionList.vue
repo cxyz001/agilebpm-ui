@@ -45,7 +45,6 @@
                 <el-space>
                   <router-link
                     v-if="!abUtil.checkIsPublicProject(true)"
-                    v-ab-btn-rights:bpmDefinition_add
                     :to="{
                       name: 'BpmDefinitionEdit',
                       query: { typeCode: query.typeCode$VEQ },
@@ -57,7 +56,6 @@
                   </router-link>
                   <el-button
                     v-else
-                    v-ab-btn-rights:bpmDefinition_add
                     :disabled="true"
                     :icon="Plus"
                     type="primary"
@@ -66,7 +64,6 @@
                   </el-button>
 
                   <el-button
-                    v-ab-btn-rights:bpmDefinition_export
                     :disabled="!selectedData || selectedData.length == 0"
                     :icon="Download"
                     type="primary"
@@ -74,13 +71,6 @@
                   >
                     导出
                   </el-button>
-
-                  <router-link
-                    v-ab-btn-rights:bpmDefinition_import
-                    :to="{ name: 'ImportPreview' }"
-                  >
-                    <el-button :icon="Download" type="primary">导入</el-button>
-                  </router-link>
                 </el-space>
               </el-col>
             </el-row>
@@ -131,11 +121,10 @@
               ab-template="edit"
               fixed="right"
               label="操作"
-              width="270"
+              width="280"
             />
             <template #edit="{ scope }">
               <el-button
-                v-ab-btn-rights:bpmDefinition_design
                 text
                 type="primary"
                 @click="showDesign(scope.row.id)"
@@ -143,7 +132,6 @@
                 设计
               </el-button>
               <el-button
-                v-ab-btn-rights:bpmDefinition_authorizations
                 text
                 type="primary"
                 @click="openAuthoDialog(scope.row.key)"
@@ -151,7 +139,6 @@
                 授权
               </el-button>
               <router-link
-                v-ab-btn-rights:bpmDefinition_start
                 :to="`/bpm/flowStart/${scope.row.key}`"
               >
                 <el-button text type="primary">启动</el-button>
@@ -162,19 +149,7 @@
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <span v-ab-btn-rights:bpmDefinition_definitionVersionList>
-                      <el-dropdown-item>
-                        <router-link
-                          :to="{
-                            name: 'BpmDefinitionVersionList',
-                            query: { key: scope.row.key },
-                          }"
-                        >
-                          版本管理
-                        </router-link>
-                      </el-dropdown-item>
-                    </span>
-                    <span v-ab-btn-rights:bpmDefinition_edit>
+                    <span >
                       <router-link
                         :to="{
                           name: 'BpmDefinitionEdit',
@@ -186,24 +161,8 @@
                         </el-dropdown-item>
                       </router-link>
                     </span>
-                    <span v-ab-btn-rights:bpmDefinition_copy>
-                      <el-dropdown-item
-                        :disabled="scope.row.processEditor === 'empty'"
-                        @click="bpmDefinitionDuplicateInfo.show(scope.row)"
-                      >
-                        <a href="javascript:void(0)">复制</a>
-                      </el-dropdown-item>
-                    </span>
-                    <span v-ab-btn-rights:bpmDefinition_startTest>
-                      <el-dropdown-item>
-                        <router-link
-                          :to="`/bpm/flowStartTest/${scope.row.key}`"
-                        >
-                          流程测试
-                        </router-link>
-                      </el-dropdown-item>
-                    </span>
-                    <span v-ab-btn-rights:bpmDefinition_del>
+                     
+                    <span >
                       <el-dropdown-item
                         @click="
                           sendAction(
@@ -231,13 +190,6 @@
             v-model="designShow"
             :def-id="designInfo.defId"
             @close="closeDefinition()"
-          />
-          <bpm-definition-duplicate-dialog
-            :flow-key="bpmDefinitionDuplicateInfo.flowKey"
-            :flow-name="bpmDefinitionDuplicateInfo.flowName"
-            :type-code="bpmDefinitionDuplicateInfo.typeCode"
-            :visible="bpmDefinitionDuplicateInfo.visible"
-            @close="bpmDefinitionDuplicateInfo.close"
           />
         </div>
       </el-main>
@@ -268,7 +220,6 @@
     Upload,
     ArrowDown,
   } from '@element-plus/icons-vue'
-  import BpmDefinitionDuplicateDialog from './bpmDefinitionDuplicateDialog.vue'
   import { ElMessage } from 'element-plus'
   export default defineComponent({
     name: 'BpmDefinitionList',
@@ -276,7 +227,6 @@
       abAuthorization,
       //abDesigner,
       abDictTree,
-      BpmDefinitionDuplicateDialog,
     },
     mixins: [abTableMix],
     setup() {
