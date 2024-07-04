@@ -183,6 +183,17 @@ export default {
         parentPath: '/bpm'
       },
       component: home
-    }
+    },
+    {
+      path: 'bpm/bpmInstanceListDetail',
+      name: 'BpmInstanceListDetail',
+      component: () => import('@/views/bpm/instance/bpmInstanceListDetail.vue'),
+      meta: {
+        title: '流程实例详情',
+        dynamicNewTab: true,
+        icon: 'grid-fill',
+        noKeepAlive: false,
+      },
+    },
   ],
 }

@@ -1,16 +1,9 @@
 <template>
   <div
     v-loading="!info.bpmData.defName"
-    style="overflow: auto"
-    :style="{
-      transformOrigin: 'top left',
-      transform:
-        proxy.$route.query.abIframeType == 'iframe'
-          ? `scale(${info.scale})`
-          : '',
-    }"
+    class="layout-container-demo"    style="overflow: auto"
   >
-    <div :class="showTaskDynamic(info.bpmData) ? 'leftBoxDyminc' : 'leftBox'">
+    <div class='leftBox'>
       <div v-if="info.bpmData.defName" class="header-fix-top">
         <bpm-buttons
           v-if="info.bpmData.buttonList.length"
@@ -35,15 +28,12 @@
         <cust-form v-else ref="inner" :form-data="info.formData" />
       </div>
     </div>
-    <div v-if="showTaskDynamic(info.bpmData)" class="rightBox">
-      <bpm-task-dynamic :instance="info.bpmData.bpmInstance" />
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { useTabsStore } from '@/store/modules/tabs'
-  import { getCurrentInstance, Ref } from 'vue'
+import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+import { getCurrentInstance, Ref } from 'vue'
   import {
     abForm as custForm,
     bpmButtons,
@@ -52,13 +42,11 @@
     bpmApi,
     abTools,
   } from 'agilebpm'
-  import bpmTaskDynamic from '../myTask/components/task-dynamic.vue'
-  import { showTaskDynamic } from '../myTask/components/myTaskConfig'
   import { ElMessageBox } from 'element-plus'
 
   const { proxy } = abTools.useCurrentInstance()
   const vueContext = getCurrentInstance()
-  const { changeTabsMeta } = useTabsStore()
+  const { changeTabsMeta } = useAbStoreAdapter()
 
   const taskId = vueContext?.proxy?.$route.query.id
   vueContext.proxy.$route.query.type = 'taskId'
@@ -115,6 +103,3 @@
     }
   })
 </script>
-<style lang="scss" scoped>
-  @import '../myTask/components/taskDynamic.scss';
-</style>

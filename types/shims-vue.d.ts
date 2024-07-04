@@ -18,7 +18,7 @@ declare module 'axios' {
   }
 }
 
- 
+
  declare module "agilebpm" {
   export function setupFormDesign(app: any): void;
   export const abForm: any;
@@ -42,5 +42,10 @@ declare module 'axios' {
   export const abDesigner: any;
   export const postData: any;
   export const cptApi: any;
+  export const BpmImageDialog: any;
+  export const ApproveHistoryTable: any;
+  export const BpmImageBlock: any;
+  export const bpmButtons: any;
+  export const bpmTools: any;
 }
  

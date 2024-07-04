@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { useTabsStore } from '@/store/modules/tabs'
-  import {
+import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+import {
     abForm as custForm,
     bpmButtons,
     abUrlForm,
@@ -53,7 +53,7 @@
   } from 'agilebpm'
 
   import { getCurrentInstance, Ref } from 'vue'
-  const { changeTabsMeta } = useTabsStore()
+  const { changeTabsMeta } = useAbStoreAdapter()
 
   const spacer = h(ElDivider, { direction: 'vertical' })
   const vueContext = getCurrentInstance()

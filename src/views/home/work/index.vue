@@ -4,7 +4,6 @@
 		<el-row :gutter="15">
 			<el-col :lg="24">
 				<el-card shadow="never" header="我的常用">
-					<myapp></myapp>
 				</el-card>
 			</el-col>
 		</el-row>

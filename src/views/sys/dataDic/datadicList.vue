@@ -340,7 +340,6 @@
   const { proxy } = abTools.useCurrentInstance()
   // 查询条件定义，如果ts 需要定义所有参数，这里覆盖父类，不是的话可以不用设置，父类已经定义了query 对象
   const ruleFormRef = ref<FormInstance>()
-  import { storage } from '@/config'
 
   const info: any = reactive({
     tableHeight: `${window.innerHeight - 340}px`,
@@ -702,18 +701,6 @@
 
   onMounted(() => {
     getDataTree()
-
-    let b = true //是否要默认加载数据
-    if (storage && 'localStorage' == storage) {
-      if (localStorage.getItem('focusModeData')) {
-        const focusModeData = JSON.parse(localStorage.getItem('focusModeData'))
-        if (focusModeData.open) {
-          b = false //配置了专注模式且页面有分类则不需要默认加载（因为在ab-dict-tree）自动加载了
-        }
-      }
-    }
-    if (b) {
-      listFn()
-    }
+    listFn()
   })
 </script>

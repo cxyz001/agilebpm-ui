@@ -160,8 +160,7 @@
     Back,
   } from '@element-plus/icons-vue'
 
-  import { bizApi, getData, sysApi } from '~/agilebpm/api'
-  import { Arrays } from '~/agilebpm/utils/ab-util'
+  import { bizApi, getData, sysApi,abUtil } from 'agilebpm'
 
   const props = defineProps({
     type: {
@@ -339,7 +338,7 @@
     scope.row.expanded = false
     if (scope.row.columnMap) {
       Object.values(scope.row.columnMap).forEach((c) => {
-        Arrays.remove(c, info.tableData)
+        abUtil.Arrays.remove(c, info.tableData)
       })
     }
   }

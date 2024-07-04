@@ -75,17 +75,6 @@
               width="95"
             />
             <ab-column
-              label="当前环节"
-              ab-template="pendingApprovalTask"
-              width="140"
-            />
-            <template #pendingApprovalTask="{ scope }">
-              <PendingApprovalTaskPopover
-                v-if="scope.row.pendingApprovalTasks"
-                :data="scope.row.pendingApprovalTasks"
-              />
-            </template>
-            <ab-column
               ab-template="edit"
               fixed="right"
               label="操作"

@@ -19,7 +19,7 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    include: ['agilebpm', 'abDesigner', 'abFormDesigner'],
+    include: ['agilebpm', 'abDesigner'],
   },
 
   resolve: {

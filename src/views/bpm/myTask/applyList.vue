@@ -70,16 +70,6 @@
               prop="statusDesc"
               width="95"
             />
-            <ab-column
-              label="当前环节"
-              ab-template="pendingApprovalTask"
-              width="140"
-            />
-            <template #pendingApprovalTask="{ scope }">
-              <PendingApprovalTaskPopover
-                :data="scope.row.pendingApprovalTasks"
-              />
-            </template>
             <ab-column label="创建时间" prop="createTime" width="180" />
             <ab-column label="完成时间" prop="endTime" width="160" />
             <ab-column

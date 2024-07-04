@@ -5,7 +5,8 @@ import 'element-plus/dist/index.css'
 import '@/style/style.scss'
 import router from '@/router/index'
 import { setupAbCore } from 'agilebpm'
-// import { setupFormDesign } from 'abFormDesigner'
+// @ts-ignore
+import { setupFormDesign } from 'abFormDesigner'
 import 'virtual:svg-icons-register'
 
 import ElementPlus from 'element-plus'
@@ -21,7 +22,7 @@ import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
 ;(window as any).useAbStoreAdapter = useAbStoreAdapter
 
 setupAbCore(app)
-// setupFormDesign(app)
+setupFormDesign(app)
 app.use(i18n)
 app.use(pinia)
 app.use(ElementPlus)

@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { useTabsStore } from '@/store/modules/tabs'
-  import {
+import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+import {
     abForm as custForm,
     bpmButtons,
     abUrlForm,
@@ -33,7 +33,7 @@
   import { getCurrentInstance, Ref } from 'vue'
   const { proxy } = abTools.useCurrentInstance()
   const vueContext = getCurrentInstance()
-  const { changeTabsMeta } = useTabsStore()
+  const { changeTabsMeta } = useAbStoreAdapter()
   const defKey = vueContext?.proxy?.$route.params.defKey
   const info: any = reactive({
     bpmData: {} as Ref<BpmData>,

@@ -98,7 +98,6 @@
               </el-button>
               <ab-cust-dialog
                 v-else
-                v-ab-btn-rights:task_assign
                 dialog-key="userSelector"
                 :dialog-setting="{ multiple: 0 }"
                 :extra-data="scope.row.id"
@@ -110,7 +109,6 @@
                 指派候选人
               </ab-cust-dialog>
               <router-link
-                v-ab-btn-rights:task_complate
                 :to="{
                   name: 'BpmTaskComplate',
                   query: { id: scope.row.id, backR: 'BpmTaskList' },

@@ -4,17 +4,6 @@
     class="layout-container-demo"
     style="display: block; overflow: auto"
   >
-    <el-aside
-      v-if="
-        info.bpmData.ensureCandidate &&
-        info.bpmData.bpmInstance &&
-        info.bpmData.bpmInstance.status != 'draft'
-      "
-      style="float: right; width: 400px; height: 100%; overflow: hidden"
-    >
-      <bpm-task-dynamic :instance="info.bpmData.bpmInstance" />
-    </el-aside>
-
     <el-main>
       <el-container>
         <el-header v-if="info.bpmData.defName">
@@ -39,8 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { useTabsStore } from '@/store/modules/tabs'
-  import {
+import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
+import {
     abForm as custForm,
     bpmButtons,
     abUrlForm,
@@ -49,11 +38,10 @@
     bpmApi,
   } from 'agilebpm'
   import { getCurrentInstance, Ref } from 'vue'
-  import bpmTaskDynamic from '../myTask/components/task-dynamic.vue'
 
   const { proxy } = abTools.useCurrentInstance()
   const vueContext = getCurrentInstance()
-  const { changeTabsMeta } = useTabsStore()
+  const { changeTabsMeta } = useAbStoreAdapter()
   const instId = vueContext?.proxy?.$route.query.instId
   const info: any = reactive({
     bpmData: {},

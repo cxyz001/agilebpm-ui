@@ -57,38 +57,15 @@
             </el-row>
             <!--按钮区域-->
             <el-button
-              v-ab-btn-rights:bizFormDesign_sim
               :icon="Plus"
               type="primary"
               @click="diy"
             >
-              简单表单设计
+              表单设计
             </el-button>
-            <el-popover
-              content="专业表单基于业务对象，要求使用者了解数据结构。 专业表单可应用于跨系统的流程协作，支持任意数据结构，如多对多、N层子表等复杂场景。"
-              placement="right"
-              title="提示"
-              trigger="hover"
-              :width="300"
-            >
-              <template #reference>
-                <span>
-                  <ab-cust-dialog
-                    v-ab-btn-rights:bizFormDesign_bpm
-                    dialog-key="boSelector"
-                    :icon="Plus"
-                    style="margin-left: 5px"
-                    type="primary"
-                    @ok="add"
-                  >
-                    专业表单设计
-                  </ab-cust-dialog>
-                </span>
-              </template>
-            </el-popover>
             <!-- 导入 -->
             <span style="margin-left: 5px">
-              <span v-ab-btn-rights:bizFormDesign_import>
+              <span >
                 <ab-upload-dialog
                   accept=".form"
                   :after-save="afterImp"
@@ -99,7 +76,6 @@
               </span>
             </span>
             <el-button
-              v-ab-btn-rights:bizFormDesign_export
               :disabled="!selectedData || selectedData.length == 0"
               style="margin-left: 5px"
               type="primary"
@@ -108,7 +84,6 @@
               导出
             </el-button>
             <el-button
-              v-ab-btn-rights:bizFormDesign_del
               :disabled="!selectedData || selectedData.length == 0"
               :icon="Delete"
               type="danger"
@@ -154,7 +129,6 @@
             />
             <template #edit="{ scope }">
               <el-button
-                v-ab-btn-rights:bizFormDesign_design
                 text
                 type="primary"
                 @click="open(scope.row)"
@@ -185,9 +159,6 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <span v-if="scope.row.pcFormCode">
-                      <el-dropdown-item @click="codePc(scope.row.pcFormCode)">
-                        PC端源码
-                      </el-dropdown-item>
                       <el-dropdown-item
                         @click="previewPc(scope.row.pcFormCode)"
                       >
@@ -226,7 +197,7 @@
                         </biz-permission>
                       </el-dropdown-item>
                     </span>
-                    <span v-ab-btn-rights:bizFormDesign_export>
+                    <span >
                       <el-dropdown-item
                         divided
                         @click="exportXml(scope.row.code)"
@@ -234,7 +205,7 @@
                         导出
                       </el-dropdown-item>
                     </span>
-                    <span v-ab-btn-rights:bizFormDesign_design>
+                    <span >
                       <el-dropdown-item @click="copy(scope.row)">
                         <el-popover
                           placement="right"
@@ -251,7 +222,7 @@
                       </el-dropdown-item>
                     </span>
 
-                    <span v-ab-btn-rights:bizFormDesign_del>
+                    <span >
                       <el-dropdown-item
                         @click="
                           sendAction(
@@ -286,8 +257,6 @@
   } from 'agilebpm'
   import { Search, Refresh, Plus, ArrowDown } from '@element-plus/icons-vue'
   import BizPermission from '@/views/biz/bizObject/bizPermission.vue'
-  import { tokenTableName } from '@/config'
-  import { getToken } from '@/utils/token'
 
   export default {
     components: { BizPermission, abDictTree, abUploadDialog },
@@ -368,15 +337,6 @@
       codeMb(code) {
         window.open(
           abTools.getResolveUrl(`/bizFormCode?type=mb&code=${code}`, this.proxy)
-        )
-      },
-      previewMb(code) {
-        const token = getToken()
-        window.open(
-          abTools.getResolveUrl(
-            `${this.mobileUrl}/biz/form/preview?code=${code}&${tokenTableName}=${token}`,
-            this.proxy
-          )
         )
       },
       previewPc(code) {

@@ -95,7 +95,6 @@
             />
             <template #edit="{ scope }">
               <router-link
-                v-ab-btn-rights:instance_detail
                 :to="{
                   name: 'BpmInstanceListDetail',
                   query: { id: scope.row.id },
@@ -104,7 +103,6 @@
                 <el-button text type="primary">详情</el-button>
               </router-link>
               <el-button
-                v-ab-btn-rights:instance_del
                 text
                 type="primary"
                 @click="
@@ -117,7 +115,6 @@
                 删除
               </el-button>
               <el-button
-                v-ab-btn-rights:instance_imageInfo
                 text
                 type="primary"
                 @click="openImageDialog(scope.row.id)"
@@ -132,7 +129,6 @@
                   scope.row.status != 'manualEnd' &&
                   scope.row.status != 'revoke_end'
                 "
-                v-ab-btn-rights:instance_toForbidden
                 text
                 type="primary"
                 @click="forbidden(scope.row)"
@@ -141,7 +137,6 @@
               </el-button>
               <el-button
                 v-if="scope.row.suspensionState === 1"
-                v-ab-btn-rights:instance_toForbidden
                 text
                 type="primary"
                 @click="forbidden(scope.row)"

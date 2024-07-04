@@ -125,7 +125,7 @@
   import { reactive, defineComponent, getCurrentInstance } from 'vue'
   import { abTableMix, bpmApi, abTools } from 'agilebpm'
   import { Back, Download } from '@element-plus/icons-vue'
-  import { useTabsStore } from '@/store/modules/tabs'
+  import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
   // import abDesigner from 'abDesigner'
 
   import bpmDefinitionOverallView from './bpmDefinitionOverViewEdit.vue'
@@ -152,7 +152,7 @@
         show: false,
         defId: '',
       })
-      const { delVisitedRoute } = useTabsStore()
+      const { delVisitedRoute } = useAbStoreAdapter()
       const back = () => {
         proxy.$router ? proxy.$router.back() : window.history.back()
       }
