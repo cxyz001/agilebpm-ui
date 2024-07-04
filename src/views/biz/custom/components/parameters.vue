@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="common-layout">
-      <el-container>
+      <el-container v-if="state.tableData.tableData">
         <el-aside width="400px">
           <p>获取字段信息</p>
           <el-table
@@ -652,7 +652,7 @@
 </template>
 <script setup lang="ts">
   import { reactive, ref } from 'vue'
-  import { sysApi } from '@agilebpm/api'
+  import { sysApi } from 'agilebpm'
   import {
     DArrowRight,
     ArrowUpBold,
@@ -662,7 +662,6 @@
     QuestionFilled,
     Sort,
   } from '@element-plus/icons-vue'
-  import Sortable from 'sortablejs'
   const props = defineProps({
     parametersObj: {
       type: Object,
@@ -850,54 +849,7 @@
   }
   // 行拖拽
   const rowDrop = () => {
-    setTimeout(() => {
-      if (state.data.style == 'list') {
-        const displayFieldsTable = document.querySelector(
-          '.displayFieldsTable .el-table__body-wrapper tbody'
-        )
-        Sortable.create(displayFieldsTable, {
-          animation: 300,
-          handle: '.displayFields-move-btn',
-          onEnd: (evt: any) => {
-            const t = state.tableDatafirst.splice(evt.oldIndex, 1)[0]
-            state.tableDatafirst.splice(evt.newIndex, 0, t)
-          },
-        })
-      }
-      const conditionFieldsTable = document.querySelector(
-        '.conditionFieldsTable .el-table__body-wrapper tbody'
-      )
-      Sortable.create(conditionFieldsTable, {
-        animation: 300,
-        handle: '.conditionFields-move-btn',
-        onEnd: (evt: any) => {
-          const t = state.tableDatasecond.splice(evt.oldIndex, 1)[0]
-          state.tableDatasecond.splice(evt.newIndex, 0, t)
-        },
-      })
-      const returnFieldsTable = document.querySelector(
-        '.returnFieldsTable .el-table__body-wrapper tbody'
-      )
-      Sortable.create(returnFieldsTable, {
-        animation: 300,
-        handle: '.returnFields-move-btn',
-        onEnd: (evt: any) => {
-          const t = state.tableDatathird.splice(evt.oldIndex, 1)[0]
-          state.tableDatathird.splice(evt.newIndex, 0, t)
-        },
-      })
-      const sortFieldsTable = document.querySelector(
-        '.sortFieldsTable .el-table__body-wrapper tbody'
-      )
-      Sortable.create(sortFieldsTable, {
-        animation: 300,
-        handle: '.sortFields-move-btn',
-        onEnd: (evt: any) => {
-          const t = state.tableDatafourth.splice(evt.oldIndex, 1)[0]
-          state.tableDatafourth.splice(evt.newIndex, 0, t)
-        },
-      })
-    })
+     
   }
   rowDrop()
   const changeFormatterType = (value: any, row: any) => {

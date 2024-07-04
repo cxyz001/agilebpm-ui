@@ -16,9 +16,9 @@ export const useDefaultConfig = (): IdefaultModel => {
         LAYOUT: 'default',
         MENU_IS_COLLAPSE: false,
         MENU_UNIQUE_OPENED: false,
-        LAYOUT_TAGS: true,
+        LAYOUT_TAGS: false,
         LANG: 'zh-cn',
-        COLOR: '',
+        COLOR: '#009688',
         LS_ENCRYPTION: 'AES',
         LS_ENCRYPTION_key: '2XNN4K8LC0ELVWN4',
         DEFAULT_GRID: {

@@ -435,7 +435,7 @@
 <script setup lang="ts">
   import { reactive, ref, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
-  import { sysApi, bizApi, getData, postData } from '~/agilebpm'
+  import { sysApi, bizApi, getData, postData } from 'agilebpm'
   import { Search } from '@element-plus/icons-vue'
   import type { FormInstance } from 'element-plus'
   import Parameters from './components/parameters.vue'
@@ -696,11 +696,7 @@
 
   //获取数据源列表
   const getdataSourceList = () => {
-    postData(sysApi.dataSource.dataSourceList, {
-      pageSize: 99,
-    }).then(
-      (result) => {
-        info.dataSourceOptions = result.data.rows
+        info.dataSourceOptions = [{alias:"dataSourceDefault",name:"本地数据源"}];
         if (!info.data.dsKey || info.data.dsKey.length <= 0) {
           info.dataSourceOptions.forEach(
             (element: { name: string; alias: any }) => {
@@ -711,9 +707,6 @@
             }
           )
         }
-      },
-      () => {}
-    )
   }
 
   const changesource = (value: any) => {

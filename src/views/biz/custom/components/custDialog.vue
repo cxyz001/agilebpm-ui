@@ -78,7 +78,7 @@
 <script setup lang="ts">
   import { reactive, ref, watch } from 'vue'
   import { Search, RefreshRight } from '@element-plus/icons-vue'
-  import { sysApi, bizApi, postData } from '~/agilebpm'
+  import { sysApi, bizApi, postData } from 'agilebpm'
   const emit = defineEmits(['updateformKeyName', 'updateRow'])
   const props = defineProps({
     visible: {

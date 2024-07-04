@@ -46,7 +46,6 @@
               </el-col>
               <el-col class="left-panel">
                 <el-button
-                  v-ab-btn-rights:dataDict_add
                   :icon="Plus"
                   type="primary"
                   @click="addClickFn"
@@ -107,7 +106,6 @@
             >
               <template #default="scope">
                 <el-button
-                  v-ab-btn-rights:dataDict_edit
                   text
                   type="primary"
                   @click.stop="editClickFn(scope.row)"
@@ -116,7 +114,6 @@
                 </el-button>
                 <el-button
                   v-if="scope.row.isSystem !== 1"
-                  v-ab-btn-rights:dataDict_del
                   text
                   type="primary"
                   @click.stop="removeDict(scope.row)"

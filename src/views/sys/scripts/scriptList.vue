@@ -46,7 +46,6 @@
               <el-col class="left-panel">
                 <el-space>
                   <router-link
-                    v-ab-btn-rights:script_add
                     :to="{
                       name: 'ScriptEdit',
                       query: { typeCode: query.typeCode$VEQ },
@@ -94,13 +93,11 @@
             />
             <template #edit="{ scope }">
               <router-link
-                v-ab-btn-rights:script_edit
                 :to="{ name: 'ScriptEdit', query: { id: scope.row.id } }"
               >
                 <el-button text type="primary">编辑</el-button>
               </router-link>
               <el-button
-                v-ab-btn-rights:script_del
                 text
                 type="primary"
                 @click="

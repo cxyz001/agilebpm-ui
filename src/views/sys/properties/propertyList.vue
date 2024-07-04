@@ -70,7 +70,6 @@
               <el-col class="left-panel">
                 <el-space>
                   <router-link
-                    v-ab-btn-rights:properties_add
                     :to="{
                       name: 'PropertyEdit',
                       query: { typeCode: query.typeCode$VEQ },
@@ -79,7 +78,6 @@
                     <el-button :icon="Plus" type="primary">添加</el-button>
                   </router-link>
                   <el-button
-                    v-ab-btn-rights:properties_del
                     :disabled="!selectedData || selectedData.length == 0"
                     :icon="Delete"
                     type="danger"
@@ -137,13 +135,11 @@
             />
             <template #edit="{ scope }">
               <router-link
-                v-ab-btn-rights:properties_edit
                 :to="{ name: 'PropertyEdit', query: { id: scope.row.id } }"
               >
                 <el-button text type="primary">编辑</el-button>
               </router-link>
               <el-button
-                v-ab-btn-rights:properties_del
                 text
                 type="primary"
                 @click="
