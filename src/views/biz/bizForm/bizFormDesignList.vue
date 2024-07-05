@@ -125,7 +125,7 @@
               ab-template="edit"
               fixed="right"
               label="操作"
-              width="320"
+              width="220"
             />
             <template #edit="{ scope }">
               <el-button
@@ -136,20 +136,11 @@
                 设计
               </el-button>
               <el-button
-                v-if="scope.row.pcFormCode"
                 text
                 type="primary"
-                @click="codePc(scope.row.pcFormCode)"
-              >
-                PC表单
-              </el-button>
-              <el-button
-                v-if="scope.row.mbFormCode"
-                text
-                type="primary"
-                @click="codeMb(scope.row.mbFormCode)"
-              >
-                手机表单
+                @click="previewPc(scope.row.pcFormCode)"
+                >
+                预览
               </el-button>
               <el-dropdown>
                 <el-button :icon="ArrowDown" text type="primary">
@@ -159,18 +150,13 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <span v-if="scope.row.pcFormCode">
-                      <el-dropdown-item
-                        @click="previewPc(scope.row.pcFormCode)"
-                      >
-                        预览PC端
-                      </el-dropdown-item>
                       <el-dropdown-item>
                         <biz-permission
                           :bo-codes="scope.row.boCode"
                           type="form"
                           :value="scope.row.pcFormCode"
                         >
-                          PC端权限
+                          表单权限
                         </biz-permission>
                       </el-dropdown-item>
                     </span>
@@ -181,21 +167,6 @@
                       >
                         预览移动端
                       </el-dropdown-item> -->
-                      <el-dropdown-item
-                        divided
-                        @click="codeMb(scope.row.mbFormCode)"
-                      >
-                        移动端源码
-                      </el-dropdown-item>
-                      <el-dropdown-item>
-                        <biz-permission
-                          :bo-codes="scope.row.boCode"
-                          type="form"
-                          :value="scope.row.mbFormCode"
-                        >
-                          移动端权限
-                        </biz-permission>
-                      </el-dropdown-item>
                     </span>
                     <span >
                       <el-dropdown-item

@@ -199,7 +199,7 @@
 
 <script lang="ts">
   // eslint-disable-next-line no-unused-vars
-  import { reactive, defineComponent, getCurrentInstance } from 'vue'
+  import { reactive, defineComponent, getCurrentInstance, watch } from 'vue'
   import {
     abTableMix,
     bpmApi,
@@ -261,6 +261,7 @@
       watch(
         () => proxy.$route.query.newDefinitionId,
         (id) => {
+          debugger
           if (!id || designInfo.newDefinitionId == id) return
           designInfo.newDefinitionId = id
           proxy.search()

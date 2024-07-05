@@ -62,7 +62,6 @@
           <ab-select-tree
             v-model="data.bpmDefinition.typeCode"
             type-code="flowType"
-            width="auto"
           />
         </el-form-item>
         <el-form-item

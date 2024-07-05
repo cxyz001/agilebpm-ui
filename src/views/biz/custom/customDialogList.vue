@@ -82,7 +82,7 @@
         prop="system"
         width="100"
       />
-      <ab-column ab-template="edit" fixed="right" label="操作" width="320" />
+      <ab-column ab-template="edit" fixed="right" label="操作" width="200" />
       <template #edit="{ scope }">
         <router-link
           :to="{ name: 'CustomDialogEdit', query: { id: scope.row.id } }"
