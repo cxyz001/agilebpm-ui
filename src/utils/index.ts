@@ -28,6 +28,7 @@ export const useLocalStorage = {
         if (data === null)
             return data
         let value = CryptoJS.AES.decrypt(data, config.LS_ENCRYPTION_key, cfg).toString(CryptoJS.enc.Utf8)
+        if(value ==="")return value as T;
         return JSON.parse(value) as T;
     },
     set(key: string, data: string): void {

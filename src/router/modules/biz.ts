@@ -100,5 +100,27 @@ export default {
         icon: 'dashboard-line',
       },
     },
+    {
+      path: 'formCustSql/formCustSqlView/:code',
+      name: 'FormCustSqlView',
+      component: () => import('@/views/biz/formCustSql/formCustSqlView.vue'),
+      meta: {
+        title: '自定义列表',
+        icon: 'dashboard-line',
+        dynamicNewTab: true,
+        noKeepAlive: false,
+      },
+    },   
+    {
+      path: 'bizFormCombinationView/:code',
+      name: 'BizFormCombinationView',
+      component: () =>
+        import('@/views/biz/bizFormCombination/bizFormCombinationView.vue'),
+      meta: {
+        title: '组联式表单',
+        dynamicNewTab: true,
+        icon: 'dashboard-line',
+      },
+    },
   ],
 }
