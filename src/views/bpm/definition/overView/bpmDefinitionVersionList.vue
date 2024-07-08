@@ -128,11 +128,9 @@
   import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
   // import abDesigner from 'abDesigner'
 
-  import bpmDefinitionOverallView from './bpmDefinitionOverViewEdit.vue'
-
   export default defineComponent({
     name: 'BpmDefinitionVersionList',
-    components: { bpmDefinitionOverallView },
+    components: {  },
     mixins: [abTableMix],
     setup() {
       // @ts-ignore
