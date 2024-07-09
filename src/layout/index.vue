@@ -1,5 +1,11 @@
 <template>
   <!-- 通栏布局 -->
+   <div v-if="isIframe">
+    <router-view v-slot="{ Component }">
+      <component :is="Component" v-if="routeStore.reload" />
+    </router-view>
+   </div>
+   <div v-else>
   <template v-if="layout == 'header'">
     <header class="adminui-header">
       <div class="adminui-header-left">
@@ -249,6 +255,7 @@
   >
     <setting></setting>
   </el-drawer>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -290,6 +297,12 @@
   const nextMenu = ref<Array<IRouteMenu>>([])
   const pmenu = computed<IRouteMenu>(() => {
     return routeStore.pMenu as IRouteMenu
+  })
+  const isIframe = computed(() => {
+    if (route?.query?.abIframeType && route.query.abIframeType == 'iframe') {
+      return true
+    }
+    return false
   })
   const defaultOpenNames = computed<IRouteMenu>(() => {
     return routeStore.getOpenNames

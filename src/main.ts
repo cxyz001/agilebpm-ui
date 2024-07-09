@@ -7,6 +7,8 @@ import router from '@/router/index'
 import { setupAbCore } from 'agilebpm'
 // @ts-ignore
 import { setupFormDesign } from 'abFormDesigner'
+// @ts-ignore
+import { setupLayoutComponents } from 'abLayoutDesigner'
 import 'virtual:svg-icons-register'
 
 import ElementPlus from 'element-plus'
@@ -23,6 +25,7 @@ import { useAbStoreAdapter } from '@/store/modules/abStoreAdapter'
 
 setupAbCore(app)
 setupFormDesign(app)
+setupLayoutComponents(app)
 app.use(i18n)
 app.use(pinia)
 app.use(ElementPlus)

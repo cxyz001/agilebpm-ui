@@ -17,7 +17,7 @@ declare module 'axios' {
     (config: AxiosRequestConfig): Promise<any>
   }
 }
-
+ 
 
  declare module "agilebpm" {
   export function setupFormDesign(app: any): void;

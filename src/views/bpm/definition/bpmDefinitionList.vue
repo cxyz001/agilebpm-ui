@@ -261,7 +261,6 @@
       watch(
         () => proxy.$route.query.newDefinitionId,
         (id) => {
-          debugger
           if (!id || designInfo.newDefinitionId == id) return
           designInfo.newDefinitionId = id
           proxy.search()

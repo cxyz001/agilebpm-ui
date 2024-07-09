@@ -12,6 +12,8 @@
         "@codemirror/lang-java": "^6.0.0",
         "@codemirror/lang-javascript": "^6.1.0",
         "@codemirror/lang-json": "^6.0.0",
+        "@codemirror/lang-xml": "^6.0.2",
+        "@codemirror/state": "^6.0.2",
         "@codemirror/theme-one-dark": "^6.1.0",
         "@element-plus/icons-vue": "^2.0.10",
         "@rollup/plugin-commonjs": "^25.0.2",

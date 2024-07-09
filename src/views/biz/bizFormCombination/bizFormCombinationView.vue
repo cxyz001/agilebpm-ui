@@ -63,7 +63,6 @@
     const params = {} as any
     abUtil.easyClone(proxy.$route.params, params)
     abUtil.easyClone(proxy.$route.query, params)
-debugger
     if (code) {
       bizApi.formCombination.getDesignJson(code, params).then((result) => {
         pageInfo.data = result.data

@@ -247,7 +247,6 @@
   })
 
   const handleBoMap = (boMap: any) => {
-    debugger
     info.bizObjects.forEach((b: any) => {
       const bo: any = {}
       bo.code = b.code
@@ -410,7 +409,6 @@
     getData(bizApi.bizObject.BizObjectGets, {
       code: props.boCodes,
     }).then((resp: any) => {
-      debugger
       info.bizObjects = resp.data
       info.loadProgress++
       if (info.loadProgress == 2) {
