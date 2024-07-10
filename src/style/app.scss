@@ -64,9 +64,11 @@ b, strong {
 }
 
 .aminui-wrapper {
+    
     display: flex;
     flex: 1;
     overflow: auto;
+    height: 100vh;
 }
 
 
